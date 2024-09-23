@@ -19,11 +19,10 @@ jobs:
 
       - name: Make application.yml
         run: |
-        # 최상위 루트가 community가 아니기 때문에 ./community를 써줘야함
-               mkdir ./community/src/main/resources
-               cd ./community/src/main/resources
-               touch ./application.yml
-               echo "${{ secrets.APPLICATION }}" > ./application.yml
+          mkdir ./community/src/main/resources
+          cd ./community/src/main/resources
+          touch ./application.yml
+          echo "${{ secrets.APPLICATION }}" > ./application.yml
 
 
       # 프로젝트를 빌드
