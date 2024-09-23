@@ -9,4 +9,4 @@ COPY ${JAR_FILE} app.jar
 
 # Docker 컨테이너가 시작될 때, /app.jar 실행
 # 애플리케이션 timezone을 대한민국으로 설정
-ENTRYPOINT ["java","-jar","Duser.timezone=Asia/Seoul","/app.jar"]
+ENTRYPOINT ["java","-jar","-Duser.timezone=Asia/Seoul","/app.jar"]
