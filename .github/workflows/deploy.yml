@@ -1,6 +1,6 @@
 name: CI/CD with Docker
 
-# main 브랜치에 push하면 워크플로우 실행
+# main 브랜치에 push하면 워크플로우 실행!
 on:
   push:
     branches: [ "main" ]
