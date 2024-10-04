@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import efub.assignment.community.account.domain.Account;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -25,15 +26,23 @@ class AccountJpaTest {
     @Autowired
     private AccountRepository accountRepository;
 
+
     // 성공
     @Test
-    public void Account_saveTest(){
+    public void 사용자_생성_테스트(){
+
+        final String email = "abcd@gmail.com";
+        final String password = "123akd!";
+        final String nickname = "닉네임";
+        final String university = "이화";
+        final String studentId = "123456";
+
         Account account = Account.builder()
-                .email("abcd@gmail.com")
-                .password("123akd!")
-                .nickname("닉네임")
-                .university("이화여대")
-                .studentId("123456")
+                .email(email)
+                .password(password)
+                .nickname(nickname)
+                .university(university)
+                .studentId(studentId)
                 .build();
 
         testEntityManager.persist(account);
@@ -44,34 +53,49 @@ class AccountJpaTest {
 
     // 성공
     @Test
-    public void Account_save_findByEmailTest() {
-        Account account1 = Account.builder()
-                .email("abcd@gmail.com")
-                .password("123akd!")
-                .nickname("닉네임")
-                .university("이화여대")
-                .studentId("123456")
+    public void 사용자_이메일로조회_테스트() {
+        final String email = "abcd@gmail.com";
+        final String password = "123akd!";
+        final String nickname = "닉네임";
+        final String university = "이화";
+        final String studentId = "123456";
+
+        Account account = Account.builder()
+                .email(email)
+                .password(password)
+                .nickname(nickname)
+                .university(university)
+                .studentId(studentId)
                 .build();
 
-        testEntityManager.persist(account1);
+        testEntityManager.persist(account);
 
-        assertTrue(accountRepository.findByEmail("abcd@gmail.com").isPresent(), "Account should be present");
-        assertThat(accountRepository.findByEmail("abcd@gmail.com").get(),is(account1));
+        assertTrue(accountRepository.findByEmail(email).isPresent(), "Account should be present");
+        assertThat(accountRepository.findByEmail(email).get(),is(account));
     }
 
     // 실패
     @Test
-    public void Account_save_existsByNicknameTest() {
-        Account account1 = Account.builder()
-                .email("abcd@gmail.com")
-                .password("123akd!")
-                .nickname("닉네임")
-                .university("이화여대")
-                .studentId("123456")
+    public void 틀린닉네임으로_사용자존재여부_테스트() {
+
+        final String email = "abcd@gmail.com";
+        final String password = "123akd!";
+        final String nickname = "닉네임";
+        final String university = "이화";
+        final String studentId = "123456";
+
+        Account account = Account.builder()
+                .email(email)
+                .password(password)
+                .nickname(nickname)
+                .university(university)
+                .studentId(studentId)
                 .build();
 
-        testEntityManager.persist(account1);
+        final String wrongNickname = "틀린닉네임";
 
-        assertTrue(accountRepository.existsByNickname("틀린닉네임"));
+        testEntityManager.persist(account);
+
+        assertTrue(accountRepository.existsByNickname(wrongNickname));
     }
 }

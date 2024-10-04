@@ -1,17 +1,12 @@
 package efub.assignment.community.post;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import efub.assignment.community.account.AccountRepository;
 import efub.assignment.community.account.domain.Account;
 import efub.assignment.community.board.domain.Board;
 import efub.assignment.community.post.domain.Post;
-import java.util.List;
-import org.hamcrest.collection.IsEmptyCollection;
+import efub.assignment.community.post.dto.PostUpdateDto;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -19,24 +14,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class PostJpaTest {
-
-    @Autowired
-    private TestEntityManager testEntityManager;
+public class PostTest {
 
     @Autowired
     private PostRepository postRepository;
 
     static Account account;
     static Board board;
-    static String title;
-    static String content;
-    static String writerOpen;
+
 
     @BeforeAll
     static void beforeAll() {
@@ -54,34 +43,15 @@ public class PostJpaTest {
                 .boardDescription("des")
                 .boardNotice("notice")
                 .build();
-
-        title = "title";
-        content = "content";
-        writerOpen = "true";
     }
 
     // 성공
     @Test
-    public void 게시글_삭제_테스트() {
+    public void 게시글_제목본문_수정_테스트(){
 
-        Post post = Post.builder()
-                .account(account)
-                .board(board)
-                .title(title)
-                .content(content)
-                .writerOpen(writerOpen)
-                .build();
-
-        testEntityManager.persist(post);
-
-        postRepository.delete(post);
-
-        assertThat(postRepository.findAll(), IsEmptyCollection.empty());
-    }
-
-    // 실패
-    @Test
-    public void 존재하지않는_ID_게시글조회_테스트() {
+        final String title = "title";
+        final String content = "content";
+        final String writerOpen = "open";
 
         Post post1 = Post.builder()
                 .account(account)
@@ -91,8 +61,31 @@ public class PostJpaTest {
                 .writerOpen(writerOpen)
                 .build();
 
-        testEntityManager.persist(post1);
+        final String updatedTitle = "변경title";
+        final String updatedContent = "변경content";
 
-        assertThat(postRepository.findById(10l).get(), is(post1));
+        post1.update(new PostUpdateDto(updatedTitle,updatedContent));
+
+        assertThat(post1.getTitle(), is(updatedTitle));
+        assertThat(post1.getContent(), is(updatedContent));
+    }
+
+    // 실패
+    @Test
+    public void 게시글_긴제목_저장_테스트() {
+
+        final String tooLongTitle = "This title is way too long and exceeds the maximum length of 50 characters";
+        final String content = "content";
+        final String writerOpen = "open";
+
+        Post post = Post.builder()
+                .account(account)
+                .board(board)
+                .title(tooLongTitle)
+                .content(content)
+                .writerOpen(writerOpen)
+                .build();
+
+        assertThat(postRepository.save(post), is(post));
     }
 }
