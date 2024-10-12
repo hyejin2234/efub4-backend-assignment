@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class PostRequestDto {
     @NotBlank(message = "게시판 id는 필수입니다.")
     private String boardId;
@@ -26,6 +25,15 @@ public class PostRequestDto {
 
     @Value("${writer.open:false}")
     private String writerOpen;
+
+    @Builder
+    public PostRequestDto(String boardId, String writerNickname, String title, String content, String writerOpen){
+        this.boardId = boardId;
+        this.writerNickname = writerNickname;
+        this.title = title;
+        this.content = content;
+        this.writerOpen = writerOpen;
+    }
 
     public Post toEntity(Board board, Account account){
         return Post.builder()
